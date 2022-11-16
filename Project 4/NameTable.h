@@ -1,0 +1,26 @@
+#ifndef NAMETABLE_H
+#define NAMETABLE_H
+
+#include<string>
+
+class NameTableImpl;
+
+class NameTable
+{
+public:
+public:
+    NameTable();
+    ~NameTable();
+    void enterScope();
+    bool exitScope();
+    bool declare(const std::string& id, int lineNum);
+    int find(const std::string& id) const;
+    // We prevent a NameTable object from being copied or assigned
+    NameTable(const NameTable&) = delete;
+    NameTable& operator=(const NameTable&) = delete;
+
+private:
+    NameTableImpl* m_impl;
+};
+
+#endif

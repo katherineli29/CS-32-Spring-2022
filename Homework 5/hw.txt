@@ -1,0 +1,91 @@
+1.
+
+a.
+                                50
+
+                         20               60
+
+                   10        40                  70
+
+                    15    30                63          80
+
+                         24 36                        75
+b.
+Inorder: 10 15 20 24 30 36 40 50 60 63 70 75 80
+Preorder: 50 20 10 15 40 30 24 36 60 70 63 80 75
+Postorder: 15 10 24 36 30 40 20 63 75 80 70 60 50
+
+c.
+                                50
+
+                         15               60
+
+                   10        40                  70
+
+                          24                63          80
+
+                            36                        75
+
+2.
+
+a.
+struct Node{
+	int value;
+
+	Node* left;
+	Node* right;
+	Node* parent;
+};
+
+b.
+void insert(int n){
+	if rootPtr of tree is nullptr
+		create new node with value = n, left = right = parent = nullptr
+		set rootPtr to new node
+		return;
+
+	create currentNode, set to head node
+	while true
+		if currentNode value = n
+			return;
+		if n < currentNode value
+			if currentNode doesn't have left child
+				create new node with value = n, left = right = nullptr, parent = currentNode
+				return;
+			else
+				set currentNode to currentNode left
+				return;
+		else if n > currentNode value
+			if currentNode doesn't have right child
+				create new node with value = n, left = right = nullptr, parent = currentNode
+				return;
+		else
+			set currentNode to currentNode right
+			return;
+}
+
+3.
+
+a.
+                        7
+
+               5                    6
+
+             3   0                4
+
+b.
+{7, 5, 6, 3, 0, 4}
+
+c.
+{5, 6, 3, 0, 4}
+
+4.
+
+a. O(C+S)
+b. O(S+logC)
+c. O(logC + logS)
+d. O(logS)
+e. O(1)
+f. O(S + logC)
+g. O(SlogS)
+h. O(ClogS)

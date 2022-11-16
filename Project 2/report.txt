@@ -1,0 +1,207 @@
+Description of design
+A typical sequence will have several nodes. Each nodes contains two pointers, one to the node 
+before it and one to the node after it. It will also contain a value of type ItemType. The 
+first node will also have a head pointer pointing to it, and its before pointer will be a 
+nullptr. The last node will have a tail pointer pointing to it, and its after pointer will be 
+a nullptr. This means the sequence is doubly linked, but not circular. In an empty sequence, 
+there will only be a null tail pointer and a null header pointer, with no nodes. A sequence 
+with only one value will have one node, with before and after nullptrs, and both the head and 
+tail pointers will point to it.
+
+Pseudocode
+int Sequence::insert(int pos, const ItemType& value){
+if pos is not valid value
+	return -1
+
+if sequence is empty
+	increment m_size
+	set head to new node
+	set before and next pointers of new node to nullptr
+	change new node's m_value to value
+	return pos
+
+if adding to end of sequence
+	create new node after tail, set tail->next equal to it
+	set before pointer of new node to tail
+	change tail to new node
+	make next pointer of new node a nullptr
+	change new node's m_value to value
+else if adding to beginning
+	create new node before head, set head->before equal to it
+	set after pointer of new node to head
+	change head to new node
+	make before pointer of new node a nullptr
+	change new node's m_value to value
+else (adding in middle)
+	create pointer p at head
+	repeatedly:
+		move p along sequence until it reaches pos
+	create a new node
+	set next pointer to p
+	set before pointer to p->before
+	set m_value of new node to value
+
+increment m_size
+return pos
+}
+ 
+int Sequence::insert(const ItemType& value){
+if empty sequence
+	return insert(0, value)
+
+create int pos 0
+repeatedly:
+	starting at head, move a Node pointer along sequence, incrementing pos each time
+	when pointer hits a node where value is less than or equal to its value, break loop
+//pos is now first position where value <= node's value
+
+return insert(pos, value)
+}
+ 
+bool Sequence::erase(int pos){
+if pos is not valid value
+	return false
+
+if array only has one element being empted
+	delete node at head
+	set head and tail to nullptr
+	subtract 1 from m_size
+	return true
+
+if deleting tail
+	create temporary pointer to tail
+	move tail to the previous node
+	delete temporary pointer
+	set the next pointer of tail to nullptr
+	return true
+
+//else deleting middle
+create pointer p at head
+repeatedly:
+	move p along sequence until it reaches pos
+set the before pointer of the node after p to the node before p
+set the after pointer of the node before p the the node after p
+subtract 1 from m_size
+
+return true 
+}
+
+int Sequence::remove(const ItemType& value){
+if empty array
+	return 0
+
+create pointer p at head
+create int num 0 to keep track of elements deleted
+create int pos 0 to keep track of position in sequence during for loop
+repeatedly:
+	move p along sequence
+	if node has same value as parameter value
+		delete node with erase(pos)
+		increment num
+		subtract 1 from pos to account for disappearing element
+	increment pos to move forward
+
+return num
+}
+
+int subsequence(const Sequence& seq1, const Sequence& seq2){
+if either sequence is empty
+	return -1
+
+create int pos -1
+repeatedly:
+	compare values of seq1 to first value of seq2
+
+	if value of seq1 is equal to first value of seq2
+		repeatedly:
+			check that the nodes after the first shared value are the same as the 
+			rest of seq2
+
+			if a node after is not the same
+				break loop
+
+			if reached the end of seq2
+				set pos equal to starting position of seq2 in seq1
+				break loop
+
+	if pos doesn't equal -1
+		break loop (can stop checking for seq2)
+
+return pos
+}
+
+void interleave(const Sequence& seq1, const Sequence& seq2, Sequence& result){
+if seq1 is empty
+	result is seq2
+else if seq2 is empty
+	result is seq1
+else if both sequences are empty
+	result is empty sequence
+else
+	initialize result to empty sequence
+
+	repeatedly (for all of the length of the shorter sequence):
+		insert seq1 value at a position into result
+		insert seq2 value at same position into result
+
+	if seq1 is longer
+		repeatedly (for rest of length of seq1):
+			insert rest of values of seq1 into result
+	else if seq2 is longer
+		repeatedly (for rest of length of seq2):
+			insert rest of values of seq2 into result
+}
+
+Test Cases
+Sequence test; //default constructor
+assert(test.empty() == true); //new sequence is empty
+assert(test.size() == 0); //empty sequences have size 0
+Sequence base;
+for (int i = 0; i < 10; i++) 
+	assert(base.insert(i) == i); //insert returns position inserted at
+Sequence test = base; //assignment operator
+assert(base.find(0) == 0); //0 is in first position
+assert(base.find(1) == 1); //1 is in second position
+for (int i = 0; i < 10; i++)
+	assert(test.find(i) == i); //test is same as base
+base.erase(9);
+assert(base.find(9) == -1); //erase works
+base.insert(1, 15);
+assert(base.find(15) == 9); //insert pos works
+base.insert(15);
+base.remove(15);
+for(int i = 0; i < base.size(); i++){
+	ItemType value;
+	base.get(i, value); //checks get function
+	assert(value != 15); //test that remove works
+}
+assert(base.set(-1, 1) == false); //set returns false if position isn't valid
+base.set(0, 20);
+assert(base.find(20) == 0); //checks that set works
+
+Sequence test1, test2;
+for (int i = 0; i < 10; i++)
+	assert(test1.insert(i) == i);
+for (int i = 0; i < 15; i++)
+	assert(test2.insert(i + maxFill) == i);
+test1.swap(test2); //check that swap works
+assert(test1.size() == 15);
+assert(test2.size() == 10);
+
+Sequence t1, t2;
+ItemType t1arr[] = { 1, 2, 2, 3, 2, 3, 4, 5 };
+ItemType t2arr[] = { 2, 3, 4, 5 };
+for (int i = 0; i < 8; i++)
+	t1.insert(i, t1arr[i]);
+for (int i = 0; i < 4; i++)
+	t2.insert(i, t2arr[i]);
+assert(subsequence(t01, t02) == 4); //check the subsequence works
+
+Sequence t3;
+interleave(t1, t2, t3);
+assert(t3.size() == 12); //check that interleave works
+for(int i = 0; i < t3.size(); i++){
+	ItemType value;
+	t3.get(i, value);
+	std::cerr << value << " "; //check for interleaving
+}

@@ -1,0 +1,70 @@
+1. a description of your algorithms and data structures (good diagrams may help reduce the amount you have to write), and why you made the choices you did. You can assume we know all the data structures and algorithms discussed in class and their names.
+My hash table is an array of lists of nodes. One node represents one variable name, so it contains the identifier and line number. Each hash table bucket is then a list of those nodes, allowing you to contain them all. The front of the bucket contains nodes that have been added more recently. There's also a vector of string vectors, which keeps track of what variables have been declared in what scopes. Each outer vector slot represents a scope, and each array within a slot holds the variables that have been recorded in it. The hash table allows you to quickly access any variable based on its identifier, while the vector of vectors allows you to quickly access any variable based on its scope. These data structures are simply the least time-consuming, which is why they were selected. As for algorithms, the main one used is my hash function, which uses the standard hash string function and mods it by 20000, the number of buckets that I have.
+
+2. a note about the time complexity of the NameTable functions. For example, in our inefficient implementation, enterScope is constant time, exitScope is linear in the number of identifiers going out of scope, declare is linear in the number of identifiers in the current scope (because of the check for duplicates), and find is linear in the number of identifiers currently accessible.
+enterScope() is O(1) because it only changes the private variables.
+exitScope() is O(N) because it runs through the items in a scope in order to delete them.
+declare() is O(N) because it has to run through all the items in a scope in order to determine if a variable has already been included in that scope.
+find() is O(1) in the best case scenario and O(N) in the worst case because it relies on a hash table to find the variable.
+
+3. pseudocode for non-trivial algorithms.
+void NameTableImpl::enterScope(){
+increment scopes
+add a vector to the outer vector, which keeps track of scopes
+}
+
+bool NameTableImpl::exitScope(){
+if at the 0 scope
+	return false
+
+while the last slot of the vector of scopes is not empty
+	pop back the variables of the vector representing variables in the scope
+	pop off the nodes in the hash table that correspond to the ids deleted off of the vector of vectors
+
+pop back the last slot of the vector representing scopes
+decr number of scopes by 1
+return true
+}
+
+bool NameTableImpl::declare(const string& id, int lineNum){
+if the id is empty
+	return false
+
+create int x representing the id's key for the hash table
+
+if the hash bucket for the key is empty
+	create a new node with identifier id and line number lineNum
+	attach that node to the front of the hash bucket
+
+	push back the id onto the vector for the current scope
+	return true
+
+for the length of the vector representing the current scope
+	if the array of the inner vector has the same identifier as id
+		return false
+
+create a new node with identifier id and line number lineNum
+attach that node to the front of the hash bucket
+push back the id onto the vector for the current scope
+return true
+}
+
+int NameTableImpl::find(const string& id) const{
+if id is empty
+	return -1
+
+create int x representing the id's key for the hash table
+
+if the hash bucket for the key is empty
+	return -1
+
+for the length of the list in the hash bucket
+	if any item in the list has the same identifier as id
+		return the line that the item is at
+
+return -1
+}
+
+4. a note about any known bugs, serious inefficiencies, or notable problems you had.
+
+My program should be able to run fine. It runs under 18 ms for test code of 200,000, but it runs at 44 ms for test code of 400,000, a little above the desired goal of under 36 ms. I'm not sure if it's a little slower than it should be due to CPU or my algorithm.

@@ -1,0 +1,20 @@
+1e.
+The code uses an iterator to access the vector, which gets values added to it with no reassignment for the iterator in the for loop. This means that when values get added and the vector is shifted to another, larger vector, the iterator becomes a dangling iterator at the location where the vector used to be.
+
+3.
+This call causes a compilation error because we are inserting an object of the Coord type using the one-parameter version of the insert function, which includes a comparison operator (>) in its for loop. However, we have not defined this comparison operator for Coord. This means that we cannot make this comparison and there is a compilation error.
+
+4b.
+With only one parameter, you would be unable to pass down and keep track of the “path” string as a parameter for recursive calls with greater depth.
+
+5a.
+The complexity is O(N^3) because we have three layers of for loops that search through N items. In other words, the loops lead to a time complexity of N * N * N, leading to O(N^3). 
+
+5b.
+The time complexity of this function is still O(N^3) because even if the loop limit becomes i, i can still grow up to as large as N in the worst-case scenario, which is what we calculate Big-O by. Thus, with the three nested for loops, we can calculate the time complexity to be N * N * N, or O(N^3).
+
+6a.
+The time complexity is O(N^2), because get() being called is O(N), and that is nestled into a for loop, making the function O(N^2).
+
+6b.
+The time complexity is O(N), because there are only two separate for loops, which means that the whole sequences are ultimately just run through once. 
